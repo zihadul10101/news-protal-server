@@ -36,10 +36,42 @@ client.connect(err => {
         res.send(documents);
       })
   })
+  app.post('/addNews', (req, res) => {
+    const newNews = req.body;
+    console.log('adding new service: ', newNews);
+    newsCollection.insertOne(newNews)
+      .then(result => {
+        console.log('inserted count', result.insertedCount);
+        res.send({ result})
+      })
+  })
 
 
 
+  app.patch('/update/:id',(req,res)=>{
+    // console.log(req.body.title);
+    newsCollection.updateOne({ _id: ObjectId(req.params.id) },
+    {
+        $set: {title:req.body.title,catagroy:req.body.catagroy,author:req.body.author,decription:req.body.decription,image:req.body.image}
+    })
+    .then(result=>{
+       // console.log(result);
+       res.send(result.modifiedCount > 0);
+    })
 
+})
+
+app.delete('/delete/:id', (req, res) => {
+    const ObjectId = require('mongodb').ObjectId;
+    newsCollection.deleteOne({ _id: ObjectId(req.params.id) })
+        .then(result => {
+           // console.log(result);
+           res.send(result.deletedCount>0);
+           if(result){
+               event.target.parentNode.style.display.none;
+           }
+        })
+})
 
 
 
